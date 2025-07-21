@@ -8,17 +8,46 @@ class ReportTypes(str, Enum):
 
 class BasicReport():
 
+    DEFAULT_CAKE_PARAMS = {
+        'autopct': "%1.1f%%",
+        'startangle': 110,
+        'shadow': {
+            'ox': -0.04, 'edgecolor': 'none', 'shade': 0.9
+        },
+        'frame': True,
+        'pctdistance': 0.5,
+        'labeldistance': 1.1,
+        'textprops': {
+            'fontsize': 10, 'color': 'black', 'weight': "bold"
+        },
+        'wedgeprops': {
+            'edgecolor': "black", 'linewidth': 2
+        },
+        'colors': ["green", "red", "gray", "orange"],
+        'explode': (0, 0.2)
+    }
+
     def __init__(self, type_report):
         self.type_report = type_report
         self.absolute_folder_report = os.path.abspath(os.path.join(os.path.dirname( __file__ ), type_report.lower(), 'results'))
     
-    def generate_cake_grafic(self, source_path:str, graph_name:str, title:str, fields:list, total:int=None, new_fields:list=[]):
+    def generate_cake_grafic(
+            self,
+            source_path:str,
+            graph_name:str,
+            title:str,
+            fields:list,
+            total:int=None,
+            new_fields:list=[],
+            **kwargs
+            ):
         try:
             json_value = read_json_file(source_path)
         except JsonUtilsException as e:
             print(f"Json file does not have a valid value: {e}")
     
         total = total or sum([v for k, v in json_value.items() if k in fields])
+        kwargs = kwargs or self.DEFAULT_CAKE_PARAMS
         porcentages = {}
         if not new_fields:
             for field in fields:
@@ -31,8 +60,7 @@ class BasicReport():
         plt.pie(list(
             porcentages.values()),
             labels=list(porcentages.keys()),
-            autopct="%1.1f%%",
-            startangle=140
+            **kwargs
         )
         #Title
         plt.title(title)
