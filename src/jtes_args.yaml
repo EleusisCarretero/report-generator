@@ -1,0 +1,10 @@
+global_results:
+  source_path: "src/jest/test.json"
+  graph_name: "pastelazo"
+  title: "Porcentage results"
+  fields:
+    - numFailedTests
+    - numPassedTests
+  new_fields:
+    - FAILED
+    - PASSED
